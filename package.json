@@ -1,0 +1,51 @@
+{
+  "name": "oracle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup:db": "tsx scripts/setup-db.ts",
+    "seed:cms": "tsx scripts/seed-sanity.ts",
+    "seed:supabase": "tsx scripts/seed-supabase.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/studio-sqr-head/oracle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/studio-sqr-head/oracle/issues"
+  },
+  "homepage": "https://github.com/studio-sqr-head/oracle#readme",
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.64",
+    "@sanity/client": "^7.12.1",
+    "@supabase/supabase-js": "^2.81.0",
+    "@tailwindcss/postcss": "^4.1.17",
+    "ai": "^5.0.90",
+    "dotenv": "^17.2.3",
+    "next": "^16.0.1",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sanity": "^4.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
