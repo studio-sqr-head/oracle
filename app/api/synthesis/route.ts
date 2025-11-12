@@ -1,5 +1,4 @@
-import { NextRequest } from "next/server";
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
 interface PortableTextBlock {
@@ -23,7 +22,7 @@ function blocksToPlain(blocks: PortableTextBlock[] = []): string {
     .trim();
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const { user, reports } = await req.json();
 
@@ -72,7 +71,7 @@ Focus on:
 2. Overarching life themes
 3. Practical wisdom for the present moment`;
 
-    const result = streamText({
+    const { text } = await generateText({
       model: openai("gpt-4o"),
       system: systemPrompt,
       messages: [
@@ -84,7 +83,20 @@ Focus on:
       temperature: 0.7,
     });
 
-    return result.toTextStreamResponse();
+    // Return as streaming response for frontend compatibility
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(text));
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+      },
+    });
   } catch (error: any) {
     console.error("Error in /api/synthesis:", error);
     return new Response(`Error: ${error.message}`, { status: 500 });

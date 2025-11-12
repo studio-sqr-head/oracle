@@ -73,7 +73,7 @@ async function seedSupabase() {
 
     // Step 5: Calculate Matrix
     console.log("\n🔢 Calculating Destiny Matrix...");
-    const matrixNodes = calculateMatrix(DEMO_DOB);
+    const matrixNodes = calculateMatrix(new Date(DEMO_DOB));
     console.log(`  ✓ Calculated ${Object.keys(matrixNodes).length} nodes`);
     console.log(`    - Core Energy: ${matrixNodes["XY(0)"]}`);
     console.log(`    - Outer Self: ${matrixNodes["X(-4)"]}`);

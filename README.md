@@ -19,7 +19,7 @@ npm run seed:cms
 npm run dev
 ```
 
-See **[QUICKSTART.md](./QUICKSTART.md)** for detailed setup instructions.
+See **[QUICKSTA RT.md](./QUICKSTART.md)** for detailed setup instructions.
 
 ## Architecture
 

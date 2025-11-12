@@ -1,6 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2, Sparkles, Calendar, Star, Grid3x3 } from "lucide-react";
 
 interface Report {
   id: string;
@@ -9,6 +15,7 @@ interface Report {
   interpretations: Array<{
     dimensionKey: string;
     valueKey: string;
+    content?: any[]; // Sanity portable text blocks
   }>;
 }
 
@@ -46,7 +53,6 @@ export default function Home() {
       const { reports: generatedReports } = await reportResponse.json();
       setReports(generatedReports);
 
-      // Call /api/synthesis
       const synthesisResponse = await fetch("/api/synthesis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,7 +66,6 @@ export default function Home() {
         throw new Error(`Failed to generate synthesis: ${synthesisResponse.statusText}`);
       }
 
-      // Stream the response
       const reader = synthesisResponse.body?.getReader();
       const decoder = new TextDecoder();
 
@@ -82,74 +87,129 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-2">🔮 Oracle</h1>
-          <p className="text-purple-200 text-lg">
-            Personal readings from Astrology & Destiny Matrix
-          </p>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="border-b py-16 sm:py-20">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8">
+          <div className="text-center space-y-6">
+            <div className="inline-flex items-center justify-center mb-4">
+              <Sparkles className="w-16 h-16" />
+            </div>
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              Oracle
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Personal readings combining Astrology & Destiny Matrix
+            </p>
+          </div>
         </div>
+      </div>
 
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 py-16">
         {/* Input Section */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-8 mb-8 border border-purple-300 border-opacity-20">
-          <label className="block text-white text-sm font-medium mb-3">
-            Birth Date (YYYY-MM-DD)
-          </label>
-          <div className="flex gap-4">
-            <input
+        <div className="mb-16 space-y-6">
+ 
+          <div className="flex flex-row gap-4 gap-2 justify-center">
+            <Input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="flex-1 px-4 py-3 rounded bg-white bg-opacity-90 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400"
               disabled={loading}
+              className="sm:max-w-xs"
+              placeholder="Date of Birth"
+              aria-label="Date of Birth"
             />
-            <button
+            <Button
               onClick={generateReport}
               disabled={loading}
-              className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-500 text-white font-bold rounded transition-all duration-200 disabled:cursor-not-allowed"
+              size="lg"
+              className="sm:min-w-[200px]"
             >
+              {loading && <Loader2 className="animate-spin" />}
               {loading ? "Generating..." : "Generate Reading"}
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-500 bg-opacity-20 border border-red-400 text-red-200 px-6 py-4 rounded mb-8">
-            <p className="font-semibold">Error:</p>
-            <p>{error}</p>
+          <div className="mb-16 p-6 space-y-2">
+            <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              Error
+            </h3>
+            <p className="text-muted-foreground">{error}</p>
           </div>
         )}
 
         {/* Reports Section */}
         {reports && (
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-8 mb-8 border border-purple-300 border-opacity-20">
-            <h2 className="text-2xl font-bold text-white mb-6">📊 System Reports</h2>
-
+          <div className="space-y-24 mb-24">
             {reports.map((report) => (
-              <div
-                key={report.id}
-                className="bg-white bg-opacity-5 rounded-lg p-6 mb-6 border border-purple-200 border-opacity-10"
-              >
-                <h3 className="text-xl font-semibold text-purple-200 mb-4 capitalize">
-                  {report.system_key === "astro" ? "⭐ Astrology" : "🔢 Destiny Matrix"}
-                </h3>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {report.interpretations.slice(0, 8).map((interp, idx) => (
-                    <div key={idx} className="text-sm text-gray-200">
-                      <span className="font-semibold text-purple-300">
-                        {interp.dimensionKey}:
-                      </span>{" "}
-                      {interp.valueKey}
-                    </div>
-                  ))}
+              <div key={report.id} className="space-y-12">
+                {/* Report Header */}
+                <div className="flex items-start gap-4 pb-6 border-b">
+                  {report.system_key === "astro" ? (
+                    <Star className="w-10 h-10 flex-shrink-0" />
+                  ) : (
+                    <Grid3x3 className="w-10 h-10 flex-shrink-0" />
+                  )}
+                  <div className="space-y-2">
+                    <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
+                      {report.system_key === "astro" ? "Astrology Report" : "Destiny Matrix Report"}
+                    </h2>
+                    <p className="text-muted-foreground">
+                      {report.interpretations.length} key dimensions analyzed
+                    </p>
+                  </div>
                 </div>
 
-                <div className="text-xs text-gray-400 mt-4">
-                  ID: {report.id}
+  
+
+
+
+                {/* Interpretations */}
+                <div className="space-y-6">
+                  <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                    Detailed Interpretations
+                  </h3>
+                  <div className="space-y-8">
+                    {report.interpretations.map((interp, idx) => {
+                      // Extract text from Sanity portable text blocks
+                      let content = "No interpretation available";
+                      if (interp.content && Array.isArray(interp.content)) {
+                        content = interp.content
+                          .map((block: any) => {
+                            if (block._type === "block" && block.children) {
+                              return block.children
+                                .map((child: any) => child.text || "")
+                                .join("");
+                            }
+                            return "";
+                          })
+                          .join("\n\n")
+                          .trim() || "No interpretation available";
+                      }
+
+                      const dimensionName = interp.dimensionKey
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (l) => l.toUpperCase());
+
+                      return (
+                        <div key={idx} className="space-y-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <h4 className="scroll-m-20 text-lg font-semibold tracking-tight">
+                              {dimensionName}
+                            </h4>
+                            <Badge className="flex-shrink-0">{interp.valueKey}</Badge>
+                          </div>
+                          <p className="leading-7 text-muted-foreground whitespace-pre-line">
+                            {content}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
@@ -158,10 +218,20 @@ export default function Home() {
 
         {/* Synthesis Section */}
         {narrative && (
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-8 border border-purple-300 border-opacity-20">
-            <h2 className="text-2xl font-bold text-white mb-6">✨ Unified Narrative</h2>
-            <div className="prose prose-invert max-w-none">
-              <p className="text-purple-100 leading-relaxed whitespace-pre-wrap">
+          <div className="space-y-12 mb-24">
+            <div className="flex items-start gap-4 pb-6 border-b">
+              <Sparkles className="w-10 h-10 flex-shrink-0" />
+              <div className="space-y-2">
+                <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight">
+                  Unified Narrative
+                </h2>
+                <p className="text-muted-foreground">
+                  AI-synthesized insights from your complete reading
+                </p>
+              </div>
+            </div>
+            <div>
+              <p className="text-lg leading-7 text-muted-foreground whitespace-pre-wrap">
                 {narrative}
               </p>
             </div>
@@ -170,25 +240,15 @@ export default function Home() {
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-400"></div>
-            <p className="text-purple-200 mt-4">Generating your reading...</p>
+          <div className="text-center py-20 space-y-4">
+            <Loader2 className="w-16 h-16 animate-spin mx-auto" />
+            <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">
+              Generating your reading...
+            </h3>
+            <p className="text-muted-foreground">This may take a moment</p>
           </div>
         )}
 
-        {/* Instructions */}
-        {!reports && !narrative && !loading && (
-          <div className="bg-white bg-opacity-5 rounded-lg p-8 border border-purple-200 border-opacity-20 text-center">
-            <p className="text-gray-300 mb-4">
-              Enter your birth date and click "Generate Reading" to receive personalized
-              insights from multiple spiritual systems.
-            </p>
-            <p className="text-gray-400 text-sm">
-              Your reading combines Astrology (Sun/Moon/Rising) and Destiny Matrix (30+ nodes)
-              into a unified narrative powered by AI.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

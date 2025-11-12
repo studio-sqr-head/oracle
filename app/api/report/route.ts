@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         userId,
         systemKey: "astro",
         inputs,
-        nodes,
+        nodes: nodes as unknown as Record<string, number>,
         interpretations,
       });
 
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     // Generate Matrix report if requested
     if (systems.includes("matrix")) {
-      const nodes = calculateMatrix(inputs.date);
+      const nodes = calculateMatrix(new Date(inputs.date));
 
       const mappings = [
         { dimensionKey: "xy0_core", valueKey: String(nodes["XY(0)"]) },
