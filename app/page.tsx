@@ -20,7 +20,7 @@ interface Report {
 }
 
 export default function Home() {
-  const [date, setDate] = useState("1990-08-31");
+  const [date, setDate] = useState();
   const [reports, setReports] = useState<Report[] | null>(null);
   const [narrative, setNarrative] = useState("");
   const [loading, setLoading] = useState(false);
